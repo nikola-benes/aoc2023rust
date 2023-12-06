@@ -42,6 +42,10 @@ pub trait StringPlus: Sized {
     fn parse_<F: FromStr>(&self) -> F {
         self._s().parse().ok().unwrap()
     }
+
+    fn chars_v(&self) -> Vec<char> {
+        self._s().chars().collect()
+    }
 }
 
 impl StringPlus for &str {
