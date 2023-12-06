@@ -24,6 +24,14 @@ pub trait IteratorPlus: Iterator {
         self.nth(n).unwrap()
     }
 
+    fn reduce_<F>(self, f: F) -> Self::Item
+    where
+        Self: Sized,
+        F: FnMut(Self::Item, Self::Item) -> Self::Item,
+    {
+        self.reduce(f).unwrap()
+    }
+
     // This is a version of ‹reduce› that works for iterators over references
     // without cloning all of the elements. (It only clones the first one.)
     fn fold1_<'a, F, T>(mut self, f: F) -> T
@@ -59,6 +67,16 @@ pub trait IteratorPlus: Iterator {
         let a = self.next_();
         let b = self.next_();
         (a, b)
+    }
+
+    fn to_triple(mut self) -> (Self::Item, Self::Item, Self::Item)
+    where
+        Self: Sized,
+    {
+        let a = self.next_();
+        let b = self.next_();
+        let c = self.next_();
+        (a, b, c)
     }
 }
 
