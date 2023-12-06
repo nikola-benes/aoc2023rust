@@ -65,24 +65,31 @@ fn main() {
     };
 
     let mut part2 = 0;
+    let mut touched = HashSet::new();
 
     for y in 0..rows {
         for x in 0..cols {
             let c = get(y, x);
-            if c == '*' {
+            if c != '.' && !c.is_ascii_digit() {
                 let ns = DIRS
                     .iter()
                     .filter_map(|(dy, dx)| num_get(y + dy, x + dx))
                     .collect::<HashSet<_>>();
-                if ns.len() == 2 {
+                if c == '*' && ns.len() == 2 {
                     part2 += ns
-                        .into_iter()
-                        .map(|ix| nums[ix as usize])
+                        .iter()
+                        // Sprinkle some * on the code until it compiles…
+                        .map(|ix| nums[*ix as usize])
                         .product::<i32>();
                 }
+                touched.extend(ns.into_iter());
             }
         }
     }
 
+    println!(
+        "{}",
+        touched.into_iter().map(|n| nums[n as usize]).sum::<i32>()
+    );
     println!("{}", part2);
 }

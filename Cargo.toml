@@ -21,9 +21,5 @@ name = "02"
 path = "src/02.rs"
 
 [[bin]]
-name = "03a"
-path = "src/03a.rs"
-
-[[bin]]
-name = "03b"
-path = "src/03b.rs"
+name = "03"
+path = "src/03.rs"
