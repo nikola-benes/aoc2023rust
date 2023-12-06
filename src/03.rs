@@ -74,16 +74,13 @@ fn main() {
                         .iter()
                         // Sprinkle some * on the code until it compiles…
                         .map(|ix| nums[*ix as usize])
-                        .product::<i32>();
+                        .product_();
                 }
                 touched.extend(ns.into_iter());
             }
         }
     }
 
-    println!(
-        "{}",
-        touched.into_iter().map(|n| nums[n as usize]).sum::<i32>()
-    );
+    println!("{}", touched.into_iter().map(|n| nums[n as usize]).sum_());
     println!("{}", part2);
 }

@@ -1,4 +1,6 @@
 use std::io;
+use std::iter::Product;
+use std::iter::Sum;
 use std::str::FromStr;
 
 pub fn lines() -> impl Iterator<Item = String> {
@@ -32,6 +34,22 @@ pub trait IteratorPlus: Iterator {
     {
         let init = self.next_().clone();
         self.fold(init, f)
+    }
+
+    fn sum_(self) -> Self::Item
+    where
+        Self: Sized,
+        Self::Item: Sum,
+    {
+        self.sum::<Self::Item>()
+    }
+
+    fn product_(self) -> Self::Item
+    where
+        Self: Sized,
+        Self::Item: Product,
+    {
+        self.product::<Self::Item>()
     }
 }
 
