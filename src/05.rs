@@ -27,11 +27,10 @@ fn main() {
     let mut seeds = initial.clone();
     for changes in maps.iter() {
         let mut new_seeds = seeds.clone();
-        for (dst, src, len) in changes.iter() {
-            for (i, seed) in seeds.iter().enumerate() {
-                // Autoderef works in arithmetic operators,
-                // but not in comparison operators… curiouser and curiouser.
-                if src <= seed && *seed < src + len {
+        // Pattern matching to avoid (auto-)derefencing.
+        for &(dst, src, len) in changes.iter() {
+            for (i, &seed) in seeds.iter().enumerate() {
+                if src <= seed && seed < src + len {
                     new_seeds[i] = seed + dst - src;
                 }
             }
@@ -52,9 +51,8 @@ fn main() {
     for changes in maps.into_iter() {
         let mut new_seeds = VecDeque::new();
         while let Some((from, mut to)) = seeds.pop_front() {
-            for (dst, src, len) in changes.iter() {
-                // Autoderefences, what fun!
-                let (m_from, m_to) = (from.max(*src), to.min(src + len));
+            for &(dst, src, len) in changes.iter() {
+                let (m_from, m_to) = (from.max(src), to.min(src + len));
                 if m_from >= m_to {
                     continue;
                 }
