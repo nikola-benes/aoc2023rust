@@ -1,0 +1,9 @@
+[package]
+name = "aoc2023rust"
+version = "0.1.0"
+
+[dependencies]
+
+[[bin]]
+name = "01a"
+path = "src/01a.rs"
