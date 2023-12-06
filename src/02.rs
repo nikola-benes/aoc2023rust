@@ -6,7 +6,7 @@ fn lines() -> impl Iterator<Item = String> {
     io::stdin().lines().map(|l| l.unwrap())
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Default)]
 struct Cubes {
     red: i32,
     green: i32,
@@ -21,11 +21,7 @@ fn main() {
                 .unwrap()
                 .split("; ")
                 .map(|game| {
-                    let mut cs = Cubes {
-                        red: 0,
-                        green: 0,
-                        blue: 0,
-                    };
+                    let mut cs = Cubes::default();
                     game.split(", ").for_each(|cube| {
                         let mut it = cube.split(' ');
                         // Christmas comes early this year!
@@ -73,18 +69,11 @@ fn main() {
         // One solution is to use ‹game.iter().cloned().reduce(…)›.
         // Alternatively, we can write an explicit for cycle or use ‹fold›
         // with an initial value.
-        let m = game.iter().fold(
-            Cubes {
-                red: 0,
-                green: 0,
-                blue: 0,
-            },
-            |a, b| Cubes {
-                red: max(a.red, b.red),
-                green: max(a.green, b.green),
-                blue: max(a.blue, b.blue),
-            },
-        );
+        let m = game.iter().fold(Cubes::default(), |a, b| Cubes {
+            red: max(a.red, b.red),
+            green: max(a.green, b.green),
+            blue: max(a.blue, b.blue),
+        });
 
         part2 += m.red * m.green * m.blue;
     }
