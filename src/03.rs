@@ -13,19 +13,24 @@ const DIRS: [(i32, i32); 8] = [
     (1, 1),
 ];
 
+fn get2d<T>(v: &Vec<Vec<T>>, y: i32, x: i32, def: T) -> T
+where
+    T: Copy,
+{
+    if y < 0 || y >= v.len() as i32 || x < 0 || x >= v[0].len() as i32 {
+        def
+    } else {
+        v[y as usize][x as usize]
+    }
+}
+
 fn main() {
     let schema = lines().map_v(|line| line.trim_end().chars_v());
     let (rows, cols) = (schema.len() as i32, schema[0].len() as i32);
     let mut nums = Vec::new();
-    let mut num_at = vec![vec![-1; cols as usize]; rows as usize];
+    let mut num_at = vec![vec![None; cols as usize]; rows as usize];
 
-    let get = |y: i32, x: i32| {
-        if y < 0 || y >= rows || x < 0 || x >= cols {
-            '.'
-        } else {
-            schema[y as usize][x as usize]
-        }
-    };
+    let get = |y: i32, x: i32| get2d(&schema, y, x, '.');
 
     for y in 0..rows {
         let mut x = 0;
@@ -46,23 +51,12 @@ fn main() {
             let ix = nums.len() as i32;
             nums.push(num);
             for nx in start..x {
-                num_at[y as usize][nx as usize] = ix;
+                num_at[y as usize][nx as usize] = Some(ix);
             }
         }
     }
 
-    let num_get = |y: i32, x: i32| {
-        if y < 0 || y >= rows || x < 0 || x >= cols {
-            None
-        } else {
-            let num = num_at[y as usize][x as usize];
-            if num == -1 {
-                None
-            } else {
-                Some(num)
-            }
-        }
-    };
+    let num_get = |y: i32, x: i32| get2d(&num_at, y, x, None);
 
     let mut part2 = 0;
     let mut touched = HashSet::new();
