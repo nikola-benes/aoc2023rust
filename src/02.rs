@@ -1,9 +1,41 @@
 use std::cmp::max;
 use std::io;
+use std::str::FromStr;
 
 // I really miss auto return type deduction.
 fn lines() -> impl Iterator<Item = String> {
     io::stdin().lines().map(|l| l.unwrap())
+}
+
+// Useful methods so we can avoid all that unwrapping and collecting.
+trait IteratorPlus: Iterator {
+    fn map_v<B, F>(self, f: F) -> Vec<B>
+    where
+        Self: Sized,
+        F: FnMut(Self::Item) -> B,
+    {
+        self.map(f).collect()
+    }
+
+    fn next_(&mut self) -> Self::Item {
+        self.next().unwrap()
+    }
+
+    fn nth_(&mut self, n: usize) -> Self::Item {
+        self.nth(n).unwrap()
+    }
+}
+
+impl<T: Iterator> IteratorPlus for T {}
+
+trait StringPlus: Sized {
+    fn parse_<F: FromStr>(&self) -> F;
+}
+
+impl StringPlus for &str {
+    fn parse_<F: FromStr>(&self) -> F {
+        self.parse().ok().unwrap()
+    }
 }
 
 #[derive(Copy, Clone, Default)]
@@ -14,35 +46,23 @@ struct Cubes {
 }
 
 fn main() {
-    let games = lines()
-        .map(|line| {
-            line.split(": ")
-                .nth(1)
-                .unwrap()
-                .split("; ")
-                .map(|game| {
-                    let mut cs = Cubes::default();
-                    game.split(", ").for_each(|cube| {
-                        let mut it = cube.split(' ');
-                        // Christmas comes early this year!
-                        // So much unwrapping…
-                        // I would love to use ‹and_then› here, but
-                        // Option and Result cannot be combined that way.
-                        let n = it.next().unwrap().parse::<i32>().unwrap();
-                        let c = it.next().unwrap();
-                        match c {
-                            "red" => cs.red += n,
-                            "green" => cs.green += n,
-                            "blue" => cs.blue += n,
-                            _ => panic!(),
-                        }
-                    });
-                    cs
-                })
-                .collect::<Vec<_>>()
+    let games = lines().map_v(|line| {
+        line.split(": ").nth_(1).split("; ").map_v(|game| {
+            let mut cs = Cubes::default();
+            game.split(", ").for_each(|cube| {
+                let mut it = cube.split(' ');
+                let n = it.next_().parse_::<i32>();
+                let c = it.next_();
+                match c {
+                    "red" => cs.red += n,
+                    "green" => cs.green += n,
+                    "blue" => cs.blue += n,
+                    _ => panic!(),
+                }
+            });
+            cs
         })
-        .collect::<Vec<_>>();
-    // Perhaps a map_collect combo would be nice.
+    });
 
     let limit = Cubes {
         red: 12,
