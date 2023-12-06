@@ -38,11 +38,20 @@ pub trait IteratorPlus: Iterator {
 impl<T: Iterator> IteratorPlus for T {}
 
 pub trait StringPlus: Sized {
-    fn parse_<F: FromStr>(&self) -> F;
+    fn _s(&self) -> &str;
+    fn parse_<F: FromStr>(&self) -> F {
+        self._s().parse().ok().unwrap()
+    }
 }
 
 impl StringPlus for &str {
-    fn parse_<F: FromStr>(&self) -> F {
-        self.parse().ok().unwrap()
+    fn _s(&self) -> &str {
+        self
+    }
+}
+
+impl StringPlus for String {
+    fn _s(&self) -> &str {
+        self.as_str()
     }
 }
