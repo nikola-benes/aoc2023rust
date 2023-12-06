@@ -24,6 +24,18 @@ trait IteratorPlus: Iterator {
     fn nth_(&mut self, n: usize) -> Self::Item {
         self.nth(n).unwrap()
     }
+
+    // This is a version of ‹reduce› that works for iterators over references
+    // without cloning all of the elements. (It only clones the first one.)
+    fn fold1_<'a, F, T>(mut self, f: F) -> T
+    where
+        T: Clone + 'a,
+        Self: Sized + Iterator<Item = &'a T>,
+        F: FnMut(T, &'a T) -> T,
+    {
+        let init = self.next_().clone();
+        self.fold(init, f)
+    }
 }
 
 impl<T: Iterator> IteratorPlus for T {}
@@ -82,14 +94,7 @@ fn main() {
 
     let mut part2 = 0;
     for game in games.iter() {
-        // Using ‹game.iter().reduce(…)› doesn't work, because the
-        // iterated-over elements are references, and the lambda thus cannot
-        // produce new elements by value.
-        //
-        // One solution is to use ‹game.iter().cloned().reduce(…)›.
-        // Alternatively, we can write an explicit for cycle or use ‹fold›
-        // with an initial value.
-        let m = game.iter().fold(Cubes::default(), |a, b| Cubes {
+        let m = game.iter().fold1_(|a, b| Cubes {
             red: max(a.red, b.red),
             green: max(a.green, b.green),
             blue: max(a.blue, b.blue),
