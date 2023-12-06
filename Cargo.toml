@@ -4,6 +4,10 @@ version = "0.1.0"
 
 [dependencies]
 
+[lib]
+name = "aoc"
+path = "src/aoc.rs"
+
 [[bin]]
 name = "01a"
 path = "src/01a.rs"
