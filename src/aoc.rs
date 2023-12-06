@@ -51,6 +51,15 @@ pub trait IteratorPlus: Iterator {
     {
         self.product::<Self::Item>()
     }
+
+    fn to_pair(mut self) -> (Self::Item, Self::Item)
+    where
+        Self: Sized,
+    {
+        let a = self.next_();
+        let b = self.next_();
+        (a, b)
+    }
 }
 
 impl<T: Iterator> IteratorPlus for T {}
