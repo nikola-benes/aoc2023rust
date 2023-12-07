@@ -1,4 +1,3 @@
-mod aoc;
 use aoc::*;
 
 const CARDS: &'static str = "23456789TJQKA";

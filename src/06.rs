@@ -1,4 +1,3 @@
-mod aoc;
 use aoc::*;
 use std::iter::zip;
 

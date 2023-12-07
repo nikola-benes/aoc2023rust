@@ -25,7 +25,6 @@ path = "src/$ZDAY.rs"
 END
 
 cat <<END > "src/$ZDAY.rs"
-mod aoc;
 use aoc::*;
 
 fn main() {

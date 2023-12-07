@@ -1,4 +1,3 @@
-pub mod aoc;
 use aoc::*;
 use std::collections::VecDeque;
 use std::io;
