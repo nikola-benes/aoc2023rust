@@ -78,6 +78,14 @@ pub trait IteratorPlus: Iterator {
         let c = self.next_();
         (a, b, c)
     }
+
+    fn sorted_it(self) -> <Vec<Self::Item> as IntoIterator>::IntoIter
+    where
+        Self: Sized,
+        Self::Item: Ord,
+    {
+        self.collect::<Vec<_>>().sorted().into_iter()
+    }
 }
 
 impl<T: Iterator> IteratorPlus for T {}
@@ -102,5 +110,18 @@ impl StringPlus for &str {
 impl StringPlus for String {
     fn _s(&self) -> &str {
         self.as_str()
+    }
+}
+
+pub trait Sorted {
+    type Item;
+    fn sorted(self) -> Vec<Self::Item>;
+}
+
+impl<T: Ord> Sorted for Vec<T> {
+    type Item = T;
+    fn sorted(mut self) -> Self {
+        self.sort();
+        self
     }
 }
