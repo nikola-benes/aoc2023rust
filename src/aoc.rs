@@ -82,7 +82,7 @@ pub trait IteratorPlus: Iterator {
 
 impl<T: Iterator> IteratorPlus for T {}
 
-pub trait StringPlus: Sized {
+pub trait StringPlus {
     fn _s(&self) -> &str;
     fn parse_<F: FromStr>(&self) -> F {
         self._s().parse().ok().unwrap()
