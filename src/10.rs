@@ -26,11 +26,7 @@ fn neighbours(
 ) -> impl Iterator<Item = (i32, i32)> {
     let pipe = grid[y as usize][x as usize];
     DIRS.iter().enumerate().filter_map(move |(d, &(dy, dx))| {
-        if pipe & (1 << d) != 0 {
-            Some((y + dy, x + dx))
-        } else {
-            None
-        }
+        (pipe & (1 << d) != 0).then_some((y + dy, x + dx))
     })
 }
 
