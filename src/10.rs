@@ -77,15 +77,13 @@ fn main() {
     println!("{}", part1);
 
     let mut part2 = 0;
-    let mut in_row = 0;
-    let mut in_col = vec![0; grid[0].len()];
+    let mut inside = 0;
 
     for (y, row) in grid.iter().enumerate() {
         for (x, &tile) in row.iter().enumerate() {
             if dist.contains_key(&(y as i32, x as i32)) {
-                in_row ^= tile & (N | S);
-                in_col[x] ^= tile & (E | W);
-            } else if in_row != 0 && in_col[x] != 0 {
+                inside ^= tile & (N | S);
+            } else if inside != 0 {
                 part2 += 1;
             }
         }
