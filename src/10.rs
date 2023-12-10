@@ -20,15 +20,18 @@ const PIPES: [(char, u8); 8] = [
     ('S', START),
 ];
 
-fn neighbours((y, x): (i32, i32), grid: &Vec<Vec<u8>>) -> Vec<(i32, i32)> {
+fn neighbours(
+    (y, x): (i32, i32),
+    grid: &Vec<Vec<u8>>,
+) -> impl Iterator<Item = (i32, i32)> {
     let pipe = grid[y as usize][x as usize];
-    let mut ns = Vec::new();
-    for (d, &(dy, dx)) in DIRS.iter().enumerate() {
+    DIRS.iter().enumerate().filter_map(move |(d, &(dy, dx))| {
         if pipe & (1 << d) != 0 {
-            ns.push((y + dy, x + dx));
+            Some((y + dy, x + dx))
+        } else {
+            None
         }
-    }
-    ns
+    })
 }
 
 fn main() {
