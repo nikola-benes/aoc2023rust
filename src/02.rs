@@ -44,7 +44,7 @@ fn main() {
     }
 
     let mut part2 = 0;
-    for game in games.iter() {
+    for game in games {
         let m = game.iter().fold1_(|a, b| Cubes {
             red: max(a.red, b.red),
             green: max(a.green, b.green),

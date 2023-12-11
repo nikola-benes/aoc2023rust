@@ -58,8 +58,8 @@ fn main() {
 
     let orig_j = card_val('J');
 
-    for (h, _) in hands.iter_mut() {
-        for c in h.iter_mut() {
+    for (h, _) in &mut hands {
+        for c in h {
             if *c == orig_j {
                 *c = JOKER
             }

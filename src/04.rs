@@ -18,7 +18,7 @@ fn main() {
     });
 
     let mut part1 = 0;
-    for c in cards.iter() {
+    for c in &cards {
         // Sprinkle some ‹as› and * on the code until it compiles…
         part1 += (2 as i32).pow(*c as u32) / 2;
     }

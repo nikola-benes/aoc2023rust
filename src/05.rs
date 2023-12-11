@@ -24,10 +24,10 @@ fn main() {
 
     // Part 1
     let mut seeds = initial.clone();
-    for changes in maps.iter() {
+    for changes in &maps {
         let mut new_seeds = seeds.clone();
         // Pattern matching to avoid (auto-)derefencing.
-        for &(dst, src, len) in changes.iter() {
+        for &(dst, src, len) in changes {
             for (i, &seed) in seeds.iter().enumerate() {
                 if src <= seed && seed < src + len {
                     new_seeds[i] = seed + dst - src;
@@ -47,10 +47,10 @@ fn main() {
         seeds.push_back((start, start + len));
     }
 
-    for changes in maps.into_iter() {
+    for changes in maps {
         let mut new_seeds = VecDeque::new();
         while let Some((from, mut to)) = seeds.pop_front() {
-            for &(dst, src, len) in changes.iter() {
+            for &(dst, src, len) in &changes {
                 let (m_from, m_to) = (from.max(src), to.min(src + len));
                 if m_from >= m_to {
                     continue;
