@@ -70,7 +70,6 @@ fn main() {
                     .collect::<HashSet<_>>();
                 if c == '*' && ns.len() == 2 {
                     part2 += ns
-                        .iter()
                         // Sprinkle some * on the code until it compiles…
                         .map(|ix| nums[*ix as usize])
                         .product_();

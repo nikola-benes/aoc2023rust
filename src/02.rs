@@ -34,7 +34,7 @@ fn main() {
     };
     let mut part1 = 0;
     for (game, i) in games.iter().zip(1..) {
-        if game.iter().all(|cube|
+        if game.all(|cube|
             cube.red <= limit.red &&
             cube.green <= limit.green &&
             cube.blue <= limit.blue

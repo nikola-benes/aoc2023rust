@@ -28,7 +28,7 @@ fn main() {
         let mut new_seeds = seeds.clone();
         // Pattern matching to avoid (auto-)derefencing.
         for &(dst, src, len) in changes {
-            for (i, &seed) in seeds.iter().enumerate() {
+            for (i, &seed) in seeds.enumerate() {
                 if src <= seed && seed < src + len {
                     new_seeds[i] = seed + dst - src;
                 }

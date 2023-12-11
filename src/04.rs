@@ -24,7 +24,7 @@ fn main() {
     }
 
     let mut copies = vec![1; cards.len()];
-    for (i, c) in cards.iter().enumerate() {
+    for (i, c) in cards.enumerate() {
         let mult = copies[i];
         for j in i + 1..(i + 1 + c).min(copies.len()) {
             copies[j] += mult

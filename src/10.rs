@@ -25,7 +25,7 @@ fn neighbours(
     grid: &Vec<Vec<u8>>,
 ) -> impl Iterator<Item = (i32, i32)> {
     let pipe = grid[y as usize][x as usize];
-    DIRS.iter().enumerate().filter_map(move |(d, &(dy, dx))| {
+    DIRS.enumerate().filter_map(move |(d, &(dy, dx))| {
         (pipe & (1 << d) != 0).then_some((y + dy, x + dx))
     })
 }
@@ -34,7 +34,6 @@ fn main() {
     let pipes = HashMap::from(PIPES);
     let mut grid = lines().map_v(|line| line.chars().map_v(|c| pipes[&c]));
     let (sy_u, sx_u) = grid
-        .iter()
         .enumerate()
         .filter_map(|(y, row)| {
             row.iter().position(|&p| p == START).map(|x| (y, x))
@@ -43,7 +42,7 @@ fn main() {
     let (sy, sx) = (sy_u as i32, sx_u as i32);
 
     // fix S
-    for (d, &(dy, dx)) in DIRS.iter().enumerate() {
+    for (d, &(dy, dx)) in DIRS.enumerate() {
         if sy + dy < 0
             || sy + dy >= grid.len() as i32
             || sx + dx < 0
@@ -75,8 +74,8 @@ fn main() {
     let mut part2 = 0;
     let mut inside = 0;
 
-    for (y, row) in grid.iter().enumerate() {
-        for (x, &tile) in row.iter().enumerate() {
+    for (y, row) in grid.enumerate() {
+        for (x, &tile) in row.enumerate() {
             if dist.contains_key(&(y as i32, x as i32)) {
                 inside ^= tile & (N | S);
             } else if inside != 0 {

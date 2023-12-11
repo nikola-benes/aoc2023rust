@@ -11,7 +11,7 @@ fn next_value(mut nums: Vec<i64>) -> i64 {
 }
 
 fn next_value_impl(nums: &mut [i64]) {
-    if nums.iter().all(|&n| n == 0) {
+    if nums.all(|&n| n == 0) {
         return;
     }
     let last = nums.len() - 1;

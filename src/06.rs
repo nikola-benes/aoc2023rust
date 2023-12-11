@@ -17,7 +17,6 @@ fn solve(t: i64, d: i64) -> i64 {
 fn main() {
     let lines = lines().map_v(|line| line.split(": ").nth_(1).to_string());
     let (ts, ds) = lines
-        .iter()
         .map(|line| line.split_whitespace().map(|n| n.parse_()))
         .to_pair();
 
