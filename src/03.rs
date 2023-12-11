@@ -65,7 +65,6 @@ fn main() {
             let c = get(y, x);
             if c != '.' && !c.is_ascii_digit() {
                 let ns = DIRS
-                    .iter()
                     .filter_map(|(dy, dx)| num_get(y + dy, x + dx))
                     .collect::<HashSet<_>>();
                 if c == '*' && ns.len() == 2 {

@@ -33,7 +33,7 @@ fn main() {
         blue: 14,
     };
     let mut part1 = 0;
-    for (game, i) in games.iter().zip(1..) {
+    for (game, i) in games.zip(1..) {
         if game.all(|cube|
             cube.red <= limit.red &&
             cube.green <= limit.green &&
@@ -45,7 +45,7 @@ fn main() {
 
     let mut part2 = 0;
     for game in games {
-        let m = game.iter().fold1_(|a, b| Cubes {
+        let m = game.fold1_(|a, b| Cubes {
             red: max(a.red, b.red),
             green: max(a.green, b.green),
             blue: max(a.blue, b.blue),

@@ -25,6 +25,6 @@ fn main() {
     let input =
         lines().map_v(|line| line.split_whitespace().map_v(|n| n.parse_()));
 
-    println!("{}", input.iter().cloned().map(next_value).sum_());
+    println!("{}", input.cloned().map(next_value).sum_());
     println!("{}", input.into_iter().map(prev_value).sum_());
 }

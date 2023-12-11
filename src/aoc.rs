@@ -152,6 +152,47 @@ pub trait IterablePlus {
     {
         self._it().map(f)
     }
+
+    fn filter_map<'a, B, F>(&'a self, f: F) -> FilterMap<Self::Iter<'a>, F>
+    where
+        F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> Option<B>,
+    {
+        self._it().filter_map(f)
+    }
+
+    fn cloned<'a, T>(&'a self) -> Cloned<Self::Iter<'a>>
+    where
+        T: Clone + 'a,
+        Self::Iter<'a>: Iterator<Item = &'a T>,
+    {
+        self._it().cloned()
+    }
+
+    fn position<'a, P>(&'a self, p: P) -> Option<usize>
+    where
+        P: FnMut(<Self::Iter<'a> as Iterator>::Item) -> bool,
+    {
+        self._it().position(p)
+    }
+
+    fn zip<'a, U>(
+        &'a self,
+        other: U,
+    ) -> Zip<Self::Iter<'a>, <U as IntoIterator>::IntoIter>
+    where
+        U: IntoIterator,
+    {
+        self._it().zip(other)
+    }
+
+    fn fold1_<'a, F, T>(&'a self, f: F) -> T
+    where
+        T: Clone + 'a,
+        F: FnMut(T, &'a T) -> T,
+        Self::Iter<'a>: IteratorPlus<Item = &'a T>,
+    {
+        self._it().fold1_(f)
+    }
 }
 
 impl<T> IterablePlus for T

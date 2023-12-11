@@ -35,9 +35,7 @@ fn main() {
     let mut grid = lines().map_v(|line| line.chars().map_v(|c| pipes[&c]));
     let (sy_u, sx_u) = grid
         .enumerate()
-        .filter_map(|(y, row)| {
-            row.iter().position(|&p| p == START).map(|x| (y, x))
-        })
+        .filter_map(|(y, row)| row.position(|&p| p == START).map(|x| (y, x)))
         .next_();
     let (sy, sx) = (sy_u as i32, sx_u as i32);
 
