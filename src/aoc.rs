@@ -1,6 +1,5 @@
 use std::io;
 use std::iter::*;
-use std::slice::Iter;
 use std::str::FromStr;
 
 pub fn lines() -> impl Iterator<Item = String> {
@@ -129,40 +128,41 @@ impl StringPlus for String {
     }
 }
 
-pub trait SlicePlus {
-    type Item;
-    fn _s(&self) -> &[Self::Item];
+pub trait IterablePlus {
+    type Iter<'a>: Iterator
+    where
+        Self: 'a;
 
-    fn enumerate(&self) -> Enumerate<Iter<Self::Item>> {
-        self._s().iter().enumerate()
+    fn _it<'a>(&'a self) -> Self::Iter<'a>;
+
+    fn enumerate<'a>(&'a self) -> Enumerate<Self::Iter<'a>> {
+        self._it().enumerate()
     }
 
-    fn all<F>(&self, f: F) -> bool
+    fn all<'a, F>(&'a self, f: F) -> bool
     where
-        F: FnMut(&Self::Item) -> bool,
+        F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> bool,
     {
-        self._s().iter().all(f)
+        self._it().all(f)
     }
 
-    fn map<B, F>(&self, f: F) -> Map<Iter<Self::Item>, F>
+    fn map<'a, B, F>(&'a self, f: F) -> Map<Self::Iter<'a>, F>
     where
-        F: FnMut(&Self::Item) -> B,
+        F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> B,
     {
-        self._s().iter().map(f)
+        self._it().map(f)
     }
 }
 
-impl<T> SlicePlus for [T] {
-    type Item = T;
-    fn _s(&self) -> &[T] {
-        self
-    }
-}
+impl<T> IterablePlus for T
+where
+    T: ?Sized,
+    for<'a> &'a T: IntoIterator,
+{
+    type Iter<'a> = <&'a T as IntoIterator>::IntoIter where Self: 'a;
 
-impl<T> SlicePlus for Vec<T> {
-    type Item = T;
-    fn _s(&self) -> &[T] {
-        self
+    fn _it<'a>(&'a self) -> Self::Iter<'a> {
+        self.into_iter()
     }
 }
 
