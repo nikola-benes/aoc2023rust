@@ -1,6 +1,6 @@
 use std::io;
-use std::iter::Product;
-use std::iter::Sum;
+use std::iter::*;
+use std::slice::Iter;
 use std::str::FromStr;
 
 pub fn lines() -> impl Iterator<Item = String> {
@@ -14,6 +14,22 @@ pub trait IteratorPlus: Iterator {
         F: FnMut(Self::Item) -> B,
     {
         self.map(f).collect()
+    }
+
+    fn filter_map_v<B, F>(self, f: F) -> Vec<B>
+    where
+        Self: Sized,
+        F: FnMut(Self::Item) -> Option<B>,
+    {
+        self.filter_map(f).collect()
+    }
+
+    fn flatten_v<B>(self) -> Vec<B>
+    where
+        Self: Sized,
+        Self::Item: IntoIterator<Item = B>,
+    {
+        self.flatten().collect()
     }
 
     fn next_(&mut self) -> Self::Item {
@@ -110,6 +126,43 @@ impl StringPlus for &str {
 impl StringPlus for String {
     fn _s(&self) -> &str {
         self.as_str()
+    }
+}
+
+pub trait SlicePlus {
+    type Item;
+    fn _s(&self) -> &[Self::Item];
+
+    fn enumerate(&self) -> Enumerate<Iter<Self::Item>> {
+        self._s().iter().enumerate()
+    }
+
+    fn all<F>(&self, f: F) -> bool
+    where
+        F: FnMut(&Self::Item) -> bool,
+    {
+        self._s().iter().all(f)
+    }
+
+    fn map<B, F>(&self, f: F) -> Map<Iter<Self::Item>, F>
+    where
+        F: FnMut(&Self::Item) -> B,
+    {
+        self._s().iter().map(f)
+    }
+}
+
+impl<T> SlicePlus for [T] {
+    type Item = T;
+    fn _s(&self) -> &[T] {
+        self
+    }
+}
+
+impl<T> SlicePlus for Vec<T> {
+    type Item = T;
+    fn _s(&self) -> &[T] {
+        self
     }
 }
 
