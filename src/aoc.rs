@@ -153,6 +153,13 @@ pub trait IterablePlus {
         self._it().map(f)
     }
 
+    fn map_v<'a, B, F>(&'a self, f: F) -> Vec<B>
+    where
+        F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> B,
+    {
+        self._it().map_v(f)
+    }
+
     fn filter_map<'a, B, F>(&'a self, f: F) -> FilterMap<Self::Iter<'a>, F>
     where
         F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> Option<B>,
@@ -173,6 +180,13 @@ pub trait IterablePlus {
         P: FnMut(<Self::Iter<'a> as Iterator>::Item) -> bool,
     {
         self._it().position(p)
+    }
+
+    fn rev<'a>(&'a self) -> Rev<Self::Iter<'a>>
+    where
+        Self::Iter<'a>: DoubleEndedIterator,
+    {
+        self._it().rev()
     }
 
     fn zip<'a, U>(
