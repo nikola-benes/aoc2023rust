@@ -1,5 +1,6 @@
 use std::io;
 use std::iter::*;
+use std::slice::Chunks;
 use std::str::FromStr;
 
 pub fn lines() -> impl Iterator<Item = String> {
@@ -100,6 +101,14 @@ pub trait IteratorPlus: Iterator {
         Self::Item: Ord,
     {
         self.collect::<Vec<_>>().sorted().into_iter()
+    }
+
+    fn to_grid<T>(self) -> Grid<T>
+    where
+        Self: Sized,
+        Self::Item: IntoIterator<Item = T>,
+    {
+        self.collect()
     }
 }
 
@@ -231,5 +240,67 @@ impl<T: Ord> Sorted for Vec<T> {
     fn sorted(mut self) -> Self {
         self.sort();
         self
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Grid<T> {
+    pub rows: usize,
+    pub cols: usize,
+    tiles: Vec<T>,
+}
+
+impl<A, T> FromIterator<A> for Grid<T>
+where
+    A: IntoIterator<Item = T>,
+{
+    fn from_iter<I>(iter: I) -> Self
+    where
+        I: IntoIterator<Item = A>,
+    {
+        let mut ts = Vec::new();
+        let mut rows = 0;
+        let mut cols = 0;
+        for row in iter {
+            let size = ts.len();
+            ts.extend(row);
+            let new_cols = ts.len() - size;
+            if cols != 0 && new_cols != cols {
+                panic!();
+            }
+            cols = new_cols;
+            rows += 1;
+        }
+
+        Self {
+            rows: rows,
+            cols: cols,
+            tiles: ts,
+        }
+    }
+}
+
+impl<T> Grid<T> {
+    pub fn as_rows(&self) -> Chunks<'_, T> {
+        self.tiles.chunks(self.cols)
+    }
+
+    pub fn transpose_clone(&self) -> Self
+    where
+        T: Clone,
+    {
+        // Doing transpose in place seems hard if the grid is not square.
+        let mut v = Vec::new();
+        v.reserve(self.tiles.len());
+        for x in 0..self.cols {
+            for y in 0..self.rows {
+                v.push(self[(y, x)].clone());
+            }
+        }
+        Self {
+            rows: self.cols,
+            cols: self.rows,
+            tiles: v,
+        }
     }
 }
