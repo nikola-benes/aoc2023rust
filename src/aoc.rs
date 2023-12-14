@@ -1,3 +1,4 @@
+use std::borrow::Borrow;
 use std::io;
 use std::iter::*;
 use std::ops::{Index, IndexMut};
@@ -115,28 +116,17 @@ pub trait IteratorPlus: Iterator {
 
 impl<T: Iterator> IteratorPlus for T {}
 
-pub trait StringPlus {
-    fn _s(&self) -> &str;
+pub trait StringPlus: Borrow<str> {
     fn parse_<F: FromStr>(&self) -> F {
-        self._s().parse().ok().unwrap()
+        self.borrow().parse().ok().unwrap()
     }
 
     fn chars_v(&self) -> Vec<char> {
-        self._s().chars().collect()
+        self.borrow().chars().collect()
     }
 }
 
-impl StringPlus for &str {
-    fn _s(&self) -> &str {
-        self
-    }
-}
-
-impl StringPlus for String {
-    fn _s(&self) -> &str {
-        self.as_str()
-    }
-}
+impl<T: Borrow<str>> StringPlus for T {}
 
 pub trait IterablePlus {
     type Iter<'a>: Iterator
