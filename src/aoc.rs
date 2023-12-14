@@ -308,6 +308,12 @@ impl<T> Grid<T> {
         self.tiles.chunks(self.cols)
     }
 
+    pub fn swap<I: ToSize>(&mut self, a: (I, I), b: (I, I)) {
+        let a = self._index(a);
+        let b = self._index(b);
+        self.tiles.swap(a, b);
+    }
+
     pub fn transpose_clone(&self) -> Self
     where
         T: Clone,
@@ -328,7 +334,7 @@ impl<T> Grid<T> {
     }
 }
 
-trait ToSize {
+pub trait ToSize {
     fn to_usize(self) -> usize;
 }
 

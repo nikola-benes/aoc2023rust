@@ -2,36 +2,40 @@ use aoc::*;
 use std::collections::HashMap;
 
 fn fall(g: &mut Grid<char>, (dy, dx): (i32, i32)) {
-    let mut y = if dy == 1 { g.rows as i32 - 2 } else { -dy };
-    let mut x = if dx == 1 { g.cols as i32 - 2 } else { -dx };
+    let sy = if dy == 1 { g.rows as i32 - 1 } else { 0 };
+    let sx = if dx == 1 { g.cols as i32 - 1 } else { 0 };
+    let mut y = sy;
+    let mut x = sx;
 
     let rows = g.rows as i32;
     let cols = g.cols as i32;
 
-    let valid = |y, x| 0 <= y && y < rows && 0 <= x && x < cols;
+    let mut ty = y;
+    let mut tx = x;
 
-    while valid(y, x) {
-        if g[(y, x)] == 'O' {
-            g[(y, x)] = '.';
-            while valid(y + dy, x + dx) && g[(y + dy, x + dx)] == '.' {
-                y += dy;
-                x += dx;
-            }
-            g[(y, x)] = 'O';
+    while 0 <= y && y < rows && 0 <= x && x < cols {
+        if g[(y, x)] == '#' {
+            ty = y - dy;
+            tx = x - dx;
+        } else if g[(y, x)] == 'O' {
+            g.swap((y, x), (ty, tx));
+            ty -= dy;
+            tx -= dx;
         }
 
-        if dx == 0 {
+        y -= dy;
+        x -= dx;
+
+        if dx == 0 && (y < 0 || y as usize >= g.rows) {
             x += 1;
-            if x as usize == g.cols {
-                x = 0;
-                y -= dy;
-            }
-        } else {
+            tx += 1;
+            y = sy;
+            ty = sy;
+        } else if dy == 0 && (x < 0 || x as usize >= g.cols) {
             y += 1;
-            if y as usize == g.rows {
-                y = 0;
-                x -= dx;
-            }
+            ty += 1;
+            x = sx;
+            tx = sx;
         }
     }
 }
