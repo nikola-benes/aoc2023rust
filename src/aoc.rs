@@ -258,40 +258,22 @@ pub struct Grid<T> {
     tiles: Vec<T>,
 }
 
-impl<T, I> Index<(I, I)> for Grid<T>
-where
-    I: ToSize,
-{
+impl<T, I: ToSize> Index<(I, I)> for Grid<T> {
     type Output = T;
 
-    fn index(&self, (y, x): (I, I)) -> &T {
-        let y = y.to_usize();
-        let x = x.to_usize();
-        assert!(x < self.cols);
-        self.tiles.index(y * self.cols + x)
+    fn index(&self, i: (I, I)) -> &T {
+        self.tiles.index(self._index(i))
     }
 }
 
-impl<T, I> IndexMut<(I, I)> for Grid<T>
-where
-    I: ToSize,
-{
-    fn index_mut(&mut self, (y, x): (I, I)) -> &mut T {
-        let y = y.to_usize();
-        let x = x.to_usize();
-        assert!(x < self.cols);
-        self.tiles.index_mut(y * self.cols + x)
+impl<T, I: ToSize> IndexMut<(I, I)> for Grid<T> {
+    fn index_mut(&mut self, i: (I, I)) -> &mut T {
+        self.tiles.index_mut(self._index(i))
     }
 }
 
-impl<A, T> FromIterator<A> for Grid<T>
-where
-    A: IntoIterator<Item = T>,
-{
-    fn from_iter<I>(iter: I) -> Self
-    where
-        I: IntoIterator<Item = A>,
-    {
+impl<T, A: IntoIterator<Item = T>> FromIterator<A> for Grid<T> {
+    fn from_iter<I: IntoIterator<Item = A>>(iter: I) -> Self {
         let mut ts = Vec::new();
         let mut rows = 0;
         let mut cols = 0;
@@ -315,6 +297,13 @@ where
 }
 
 impl<T> Grid<T> {
+    fn _index<I: ToSize>(&self, (y, x): (I, I)) -> usize {
+        let y = y.to_usize();
+        let x = x.to_usize();
+        assert!(x < self.cols);
+        y * self.cols + x
+    }
+
     pub fn as_rows(&self) -> Chunks<'_, T> {
         self.tiles.chunks(self.cols)
     }
