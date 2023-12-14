@@ -1,5 +1,6 @@
 use std::io;
 use std::iter::*;
+use std::ops::{Index, IndexMut};
 use std::slice::Chunks;
 use std::str::FromStr;
 
@@ -169,6 +170,13 @@ pub trait IterablePlus {
         self._it().map_v(f)
     }
 
+    fn filter<'a, P>(&'a self, p: P) -> Filter<Self::Iter<'a>, P>
+    where
+        P: FnMut(&<Self::Iter<'a> as Iterator>::Item) -> bool,
+    {
+        self._it().filter(p)
+    }
+
     fn filter_map<'a, B, F>(&'a self, f: F) -> FilterMap<Self::Iter<'a>, F>
     where
         F: FnMut(<Self::Iter<'a> as Iterator>::Item) -> Option<B>,
@@ -250,6 +258,32 @@ pub struct Grid<T> {
     tiles: Vec<T>,
 }
 
+impl<T, I> Index<(I, I)> for Grid<T>
+where
+    I: ToSize,
+{
+    type Output = T;
+
+    fn index(&self, (y, x): (I, I)) -> &T {
+        let y = y.to_usize();
+        let x = x.to_usize();
+        assert!(x < self.cols);
+        self.tiles.index(y * self.cols + x)
+    }
+}
+
+impl<T, I> IndexMut<(I, I)> for Grid<T>
+where
+    I: ToSize,
+{
+    fn index_mut(&mut self, (y, x): (I, I)) -> &mut T {
+        let y = y.to_usize();
+        let x = x.to_usize();
+        assert!(x < self.cols);
+        self.tiles.index_mut(y * self.cols + x)
+    }
+}
+
 impl<A, T> FromIterator<A> for Grid<T>
 where
     A: IntoIterator<Item = T>,
@@ -302,5 +336,27 @@ impl<T> Grid<T> {
             cols: self.rows,
             tiles: v,
         }
+    }
+}
+
+trait ToSize {
+    fn to_usize(self) -> usize;
+}
+
+impl ToSize for usize {
+    fn to_usize(self) -> usize {
+        self
+    }
+}
+
+impl ToSize for i32 {
+    fn to_usize(self) -> usize {
+        self as usize
+    }
+}
+
+impl ToSize for i64 {
+    fn to_usize(self) -> usize {
+        self as usize
     }
 }
