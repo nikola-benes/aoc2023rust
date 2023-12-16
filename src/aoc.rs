@@ -248,7 +248,7 @@ pub struct Grid<T> {
     tiles: Vec<T>,
 }
 
-impl<T, I: ToSize> Index<(I, I)> for Grid<T> {
+impl<T, I: TryInto<usize>> Index<(I, I)> for Grid<T> {
     type Output = T;
 
     fn index(&self, i: (I, I)) -> &T {
@@ -256,7 +256,7 @@ impl<T, I: ToSize> Index<(I, I)> for Grid<T> {
     }
 }
 
-impl<T, I: ToSize> IndexMut<(I, I)> for Grid<T> {
+impl<T, I: TryInto<usize>> IndexMut<(I, I)> for Grid<T> {
     fn index_mut(&mut self, i: (I, I)) -> &mut T {
         self.tiles.index_mut(self._index(i))
     }
@@ -287,9 +287,9 @@ impl<T, A: IntoIterator<Item = T>> FromIterator<A> for Grid<T> {
 }
 
 impl<T> Grid<T> {
-    fn _index<I: ToSize>(&self, (y, x): (I, I)) -> usize {
-        let y = y.to_usize();
-        let x = x.to_usize();
+    fn _index<I: TryInto<usize>>(&self, (y, x): (I, I)) -> usize {
+        let y = y.try_into().ok().unwrap();
+        let x = x.try_into().ok().unwrap();
         assert!(x < self.cols);
         y * self.cols + x
     }
@@ -298,7 +298,7 @@ impl<T> Grid<T> {
         self.tiles.chunks(self.cols)
     }
 
-    pub fn swap<I: ToSize>(&mut self, a: (I, I), b: (I, I)) {
+    pub fn swap<I: TryInto<usize>>(&mut self, a: (I, I), b: (I, I)) {
         let a = self._index(a);
         let b = self._index(b);
         self.tiles.swap(a, b);
@@ -321,27 +321,5 @@ impl<T> Grid<T> {
             cols: self.rows,
             tiles: v,
         }
-    }
-}
-
-pub trait ToSize {
-    fn to_usize(self) -> usize;
-}
-
-impl ToSize for usize {
-    fn to_usize(self) -> usize {
-        self
-    }
-}
-
-impl ToSize for i32 {
-    fn to_usize(self) -> usize {
-        self as usize
-    }
-}
-
-impl ToSize for i64 {
-    fn to_usize(self) -> usize {
-        self as usize
     }
 }
