@@ -294,8 +294,23 @@ impl<T> Grid<T> {
         y * self.cols + x
     }
 
+    pub fn new(rows: usize, cols: usize, elem: T) -> Self
+    where
+        T: Clone,
+    {
+        Self {
+            rows,
+            cols,
+            tiles: vec![elem.clone(); rows * cols],
+        }
+    }
+
     pub fn as_rows(&self) -> Chunks<'_, T> {
         self.tiles.chunks(self.cols)
+    }
+
+    pub fn as_tiles(&self) -> &[T] {
+        &self.tiles
     }
 
     pub fn swap<I: TryInto<usize>>(&mut self, a: (I, I), b: (I, I)) {
