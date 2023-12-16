@@ -46,12 +46,7 @@ fn solve_from(cave: &Grid<char>, y: usize, x: usize, dir: u8) -> usize {
             let ndir = 1 << i;
             let (dy, dx) = DIRS[i];
             let (ny, nx) = (y + dy, x + dx);
-            if 0 <= ny
-                && ny < cave.rows as i32
-                && 0 <= nx
-                && nx < cave.cols as i32
-                && beam[(ny, nx)] & ndir == 0
-            {
+            if cave.valid_coords(ny, nx) && beam[(ny, nx)] & ndir == 0 {
                 q.push_back((ny, nx, ndir));
                 beam[(ny, nx)] |= ndir;
             }

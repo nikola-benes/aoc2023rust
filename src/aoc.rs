@@ -305,6 +305,18 @@ impl<T> Grid<T> {
         }
     }
 
+    pub fn valid_row<I: TryInto<usize>>(&self, y: I) -> bool {
+        y.try_into().is_ok_and(|y| y < self.rows)
+    }
+
+    pub fn valid_col<I: TryInto<usize>>(&self, x: I) -> bool {
+        x.try_into().is_ok_and(|x| x < self.cols)
+    }
+
+    pub fn valid_coords<I: TryInto<usize>>(&self, y: I, x: I) -> bool {
+        self.valid_row(y) && self.valid_col(x)
+    }
+
     pub fn as_rows(&self) -> Chunks<'_, T> {
         self.tiles.chunks(self.cols)
     }

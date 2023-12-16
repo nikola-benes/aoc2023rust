@@ -7,13 +7,10 @@ fn fall(g: &mut Grid<char>, (dy, dx): (i32, i32)) {
     let mut y = sy;
     let mut x = sx;
 
-    let rows = g.rows as i32;
-    let cols = g.cols as i32;
-
     let mut ty = y;
     let mut tx = x;
 
-    while 0 <= y && y < rows && 0 <= x && x < cols {
+    while g.valid_coords(y, x) {
         if g[(y, x)] == '#' {
             ty = y - dy;
             tx = x - dx;
@@ -26,12 +23,12 @@ fn fall(g: &mut Grid<char>, (dy, dx): (i32, i32)) {
         y -= dy;
         x -= dx;
 
-        if dx == 0 && (y < 0 || y as usize >= g.rows) {
+        if dx == 0 && !g.valid_row(y) {
             x += 1;
             tx += 1;
             y = sy;
             ty = sy;
-        } else if dy == 0 && (x < 0 || x as usize >= g.cols) {
+        } else if dy == 0 && !g.valid_col(x) {
             y += 1;
             ty += 1;
             x = sx;
