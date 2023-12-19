@@ -19,24 +19,24 @@ const W: u8 = 0b1000;
 // to compute A, we sum oriented triangles (0, 0) -- (x, y) -- (next_x, next_y)
 // each such area is (x * next_y - next_x * y) / 2
 
-fn normalise_dir(d: char) -> u8 {
+fn normalise_dir(d: &str) -> u8 {
     match d {
-        'U' => N,
-        'R' => E,
-        'D' => S,
-        'L' => W,
-        '0' => E,
-        '1' => S,
-        '2' => W,
-        '3' => N,
+        "U" => N,
+        "R" => E,
+        "D" => S,
+        "L" => W,
+        "0" => E,
+        "1" => S,
+        "2" => W,
+        "3" => N,
         _ => panic!(),
     }
 }
 
-fn solve(plan: &Vec<(u8, i64, String)>) -> i64 {
+fn solve(plan: &Vec<(u8, i64)>) -> i64 {
     let mut last = (0, 0);
     let twice_area = plan
-        .map(|&(dir, len, _)| {
+        .map(|&(dir, len)| {
             let (dy, dx) = DIRS[dir.trailing_zeros() as usize];
             let (ly, lx) = last;
             let (ny, nx) = (ly + dy * len, lx + dx * len);
@@ -44,31 +44,24 @@ fn solve(plan: &Vec<(u8, i64, String)>) -> i64 {
             lx * ny - nx * ly
         })
         .sum_();
-    let boundary = plan.map(|&(_, len, _)| len).sum_();
+    let boundary = plan.map(|&(_, len)| len).sum_();
     twice_area / 2 + boundary / 2 + 1
 }
 
 fn main() {
-    let mut plan = lines().map_v(|line| {
-        let (d, len, c) = line.split_whitespace().to_triple();
-        (
-            normalise_dir(d.chars().next_()),
-            len.parse_::<i64>(),
-            c.to_string(),
-        )
-    });
+    let (plan1, plan2) = lines()
+        .map(|line| {
+            let (d, len, c) = line.split_whitespace().to_triple();
+            (
+                (normalise_dir(d), len.parse_()),
+                (
+                    normalise_dir(&c[7..8]),
+                    i64::from_str_radix(&c[2..7], 16).unwrap(),
+                ),
+            )
+        })
+        .unzip();
 
-    println!("{}", solve(&plan));
-
-    for (d, len, c) in plan.iter_mut() {
-        let mut it = c.chars().skip(2);
-        let mut digits = String::new();
-        for _ in 0..5 {
-            digits.push(it.next_());
-        }
-        *len = i64::from_str_radix(&digits, 16).unwrap();
-        *d = normalise_dir(it.next_());
-    }
-
-    println!("{}", solve(&plan));
+    println!("{}", solve(&plan1));
+    println!("{}", solve(&plan2));
 }
