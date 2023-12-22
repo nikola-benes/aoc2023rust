@@ -325,6 +325,12 @@ impl<T> Grid<T> {
         &self.tiles
     }
 
+    pub fn enumerate_tiles(&self) -> impl Iterator<Item = (usize, usize, &T)> {
+        self.tiles
+            .enumerate()
+            .map(|(i, tile)| (i / self.cols, i % self.cols, tile))
+    }
+
     pub fn swap<I: TryInto<usize>>(&mut self, a: (I, I), b: (I, I)) {
         let a = self._index(a);
         let b = self._index(b);
