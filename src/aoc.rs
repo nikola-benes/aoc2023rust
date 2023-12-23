@@ -78,7 +78,7 @@ pub trait IteratorPlus: Iterator {
         self.product::<Self::Item>()
     }
 
-    fn to_pair(mut self) -> (Self::Item, Self::Item)
+    fn to_pair(&mut self) -> (Self::Item, Self::Item)
     where
         Self: Sized,
     {
@@ -87,7 +87,7 @@ pub trait IteratorPlus: Iterator {
         (a, b)
     }
 
-    fn to_triple(mut self) -> (Self::Item, Self::Item, Self::Item)
+    fn to_triple(&mut self) -> (Self::Item, Self::Item, Self::Item)
     where
         Self: Sized,
     {
