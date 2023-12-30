@@ -1,4 +1,5 @@
 use aoc::*;
+use z3::ast::Ast;
 
 type Hailstone = ((i128, i128, i128), (i128, i128, i128));
 
@@ -49,5 +50,33 @@ fn main() {
             .flatten()
             .filter(|&x| x)
             .count()
+    );
+
+    let cfg = z3::Config::new();
+    let ctx = z3::Context::new(&cfg);
+    let solver = z3::Solver::new(&ctx);
+
+    let [rx, ry, rz, vrx, vry, vrz] = ["rx", "ry", "rz", "vrx", "vry", "vrz"]
+        .map(|v| z3::ast::Real::new_const(&ctx, v));
+
+    for (i, &((x, y, z), (vx, vy, vz))) in hailstones.enumerate() {
+        let t_i = z3::ast::Real::new_const(&ctx, format!("t{}", i));
+        for (c, vc, rc, vrc) in
+            [(x, vx, &rx, &vrx), (y, vy, &ry, &vry), (z, vz, &rz, &vrz)]
+        {
+            let [c, vc] = [c, vc]
+                .map(|v| z3::ast::Int::from_i64(&ctx, v as i64).to_real());
+            solver.assert(&(c + &t_i * vc)._eq(&(rc + &t_i * vrc)));
+        }
+    }
+
+    solver.check();
+    let model = solver.get_model().unwrap();
+
+    println!(
+        "{}",
+        model
+            .eval(&(rx.to_int() + ry.to_int() + rz.to_int()), true)
+            .unwrap()
     );
 }
